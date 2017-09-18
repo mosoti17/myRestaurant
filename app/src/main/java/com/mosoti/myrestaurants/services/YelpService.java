@@ -1,7 +1,7 @@
 package com.mosoti.myrestaurants.services;
 
 
-import com.mosoti.myrestaurants.Constants;
+import com.mosoti.myrestaurants.ui.Constants;
 import com.mosoti.myrestaurants.models.Restaurant;
 
 import org.json.JSONArray;

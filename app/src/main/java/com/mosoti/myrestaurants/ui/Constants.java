@@ -1,4 +1,6 @@
-package com.mosoti.myrestaurants;
+package com.mosoti.myrestaurants.ui;
+
+import com.mosoti.myrestaurants.BuildConfig;
 
 /**
  * Created by mosoti on 9/9/17.
@@ -10,4 +12,7 @@ public class Constants {
 
     public static final String YELP_BASE_URL = "https://api.yelp.com/v3/businesses/search?term=restaurant";
     public static final String YELP_LOCATION_QUERY_PARAMETER = "location";
+    public static final String PREFERENCES_LOCATION_KEY = "location";
+    public static final String FIREBASE_CHILD_SEARCHED_LOCATION = "searchedLocation";
+    public static final String FIREBASE_CHILD_RESTAURANTS = "restaurants";
 }

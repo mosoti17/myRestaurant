@@ -1,6 +1,8 @@
 package com.mosoti.myrestaurants.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +29,9 @@ import okhttp3.Response;
 
 public class RestaurantsActivity extends AppCompatActivity {
 
+    //private SharedPreferences mSharedPreferences;
+   //private String mRecentAddress;
+
 
     public static final String TAG = RestaurantsActivity.class.getSimpleName();
     @Bind(R.id.recyclerView) RecyclerView mRecyclerView;
@@ -34,10 +39,8 @@ public class RestaurantsActivity extends AppCompatActivity {
 
 
 
-    @Bind(R.id.locationTextView)
-    TextView mLocationTextView;
-    @Bind(R.id.listView)
-    ListView mListView;
+    @Bind(R.id.locationTextView) TextView mLocationTextView;
+    @Bind(R.id.listView) ListView mListView;
 
     public ArrayList<Restaurant> mRestaurants = new ArrayList<>();
 
@@ -51,7 +54,18 @@ public class RestaurantsActivity extends AppCompatActivity {
         String location = intent.getStringExtra("location");
         mLocationTextView.setText("Here are all the restaurants near: " + location);
         getRestaurants(location);
-        Log.d(TAG, "on on crete methiod");
+
+
+        //mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+       // mRecentAddress = mSharedPreferences.getString(Constants.PREFERENCES_LOCATION_KEY, null);
+        //Log.d("Shared Pref Location", mRecentAddress);
+
+
+
+        //if (mRecentAddress != null) {
+         //   getRestaurants(mRecentAddress);
+        //}
+
 
 
     }
@@ -77,7 +91,7 @@ public class RestaurantsActivity extends AppCompatActivity {
                         RecyclerView.LayoutManager layoutManager =
                                 new LinearLayoutManager(RestaurantsActivity.this);
                         mRecyclerView.setLayoutManager(layoutManager);
-                        mRecyclerView.setHasFixedSize(false);
+                        mRecyclerView.setHasFixedSize(true);
                         for (Restaurant restaurant : mRestaurants) {
                             Log.d(TAG, "Name: " + restaurant.getName());
                             Log.d(TAG, "Phone: " + restaurant.getPhone());
