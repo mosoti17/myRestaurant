@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "626796491703-d25186qi4qvo5ifo6jnfafgkh9lgbf11.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mosoti.myrestaurants",
+            "certificate_hash": "867906ac9bdb425d1eee54e2c8269b29294b4140"
+          }
+        },
+        {
           "client_id": "626796491703-9n9j2uodkrdthk3eqcufbh76fg83j9jf.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "626796491703-9n9j2uodkrdthk3eqcufbh76fg83j9jf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
