@@ -15,7 +15,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:windowSoftInputMode="stateVisible|adjustResize"
-            android:theme="@style/NoActionBarTheme">
+            >
 
 
 

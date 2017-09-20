@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,13 +36,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //private ValueEventListener mSearchedLocationReferenceListener;
 
-    @Bind(R.id.findRestaurantsButton)
-    Button mFindRestaurantsButton;
+    @Bind(R.id.findRestaurantsButton) Button mFindRestaurantsButton;
     //@Bind(R.id.locationEditText) EditText mLocationEditText;
-    @Bind(R.id.appNameTextView)
-    TextView mAppNameTextView;
-    @Bind(R.id.savedRestaurantsButton)
-    Button mSavedRestaurantsButton;
+    @Bind(R.id.appNameTextView) TextView mAppNameTextView;
+    @Bind(R.id.savedRestaurantsButton) Button mSavedRestaurantsButton;
+    private FirebaseAuth.AuthStateListener mAuthListener;
 
 
     @Override
@@ -71,6 +70,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
         ButterKnife.bind(this);
 
         Typeface ostrichFont = Typeface.createFromAsset(getAssets(), "fonts/Capture_it.ttf");
@@ -82,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFindRestaurantsButton.setOnClickListener(this);
         mSavedRestaurantsButton.setOnClickListener(this);
     }
+
 
     @Override
     public void onClick(View v) {
@@ -109,16 +112,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_search, menu);
-        ButterKnife.bind(this);
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mEditor = mSharedPreferences.edit();
-
-        MenuItem menuItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
-
-        return true;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_logout) {
+            logout();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 //    @Override
@@ -141,5 +146,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //    }
 
 
+
+    private void logout() {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
 }
 
