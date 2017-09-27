@@ -2,6 +2,9 @@ package com.mosoti.myrestaurants.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MotionEventCompat;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,8 +16,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
+import com.mosoti.myrestaurants.R;
 import com.mosoti.myrestaurants.models.Restaurant;
 import com.mosoti.myrestaurants.ui.RestaurantDetailActivity;
+import com.mosoti.myrestaurants.ui.RestaurantDetailFragment;
 import com.mosoti.myrestaurants.util.ItemTouchHelperAdapter;
 import com.mosoti.myrestaurants.util.OnStartDragListener;
 
@@ -33,6 +38,7 @@ public class FirebaseRestaurantListAdapter extends FirebaseRecyclerAdapter<Resta
     private ChildEventListener mChildEventListener;
     private ArrayList<Restaurant> mRestaurants = new ArrayList<>();
     private Context mContext;
+    private int mOrientation;
 
 
 
@@ -81,6 +87,11 @@ public class FirebaseRestaurantListAdapter extends FirebaseRecyclerAdapter<Resta
     protected void populateViewHolder(final FirebaseRestaurantViewHolder viewHolder, Restaurant model, int position) {
         viewHolder.bindRestaurant(model);
 
+        mOrientation=viewHolder.itemView.getResources().getConfiguration().orientation;
+        if (mOrientation== Configuration.ORIENTATION_LANDSCAPE){
+            createDeatailFragment(0);
+        }
+
         viewHolder.mRestaurantImageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -95,12 +106,26 @@ public class FirebaseRestaurantListAdapter extends FirebaseRecyclerAdapter<Resta
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, RestaurantDetailActivity.class);
-                intent.putExtra("position", viewHolder.getAdapterPosition());
-                intent.putExtra("restaurants", Parcels.wrap(mRestaurants));
-                mContext.startActivity(intent);
+                int itemPosition=viewHolder.getAdapterPosition();
+                if(mOrientation==Configuration.ORIENTATION_LANDSCAPE){
+
+                    createDeatailFragment(itemPosition);
+                }else{
+                    Intent intent = new Intent(mContext, RestaurantDetailActivity.class);
+                    intent.putExtra("position", viewHolder.getAdapterPosition());
+                    intent.putExtra("restaurants", Parcels.wrap(mRestaurants));
+                    mContext.startActivity(intent);
+                }
+
             }
         });
+    }
+
+    public void createDeatailFragment(int position){
+        RestaurantDetailFragment detailFragment=RestaurantDetailFragment.newInstance(mRestaurants,position);
+        FragmentTransaction ft=((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.restaurantDetailContainer, detailFragment);
+        ft.commit();
     }
 
     @Override

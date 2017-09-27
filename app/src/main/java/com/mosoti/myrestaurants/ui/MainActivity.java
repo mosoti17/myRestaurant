@@ -227,8 +227,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (speed > SHAKE_THRESHOLD) {
                     Log.d("SensorEventListener", "shaking");
-                    Intent intent= new Intent(MainActivity.this,SavedRestaurantListActivity.class);
-                    startActivity(intent);
+//                    Intent intent= new Intent(MainActivity.this,SavedRestaurantListActivity.class);
+//                    startActivity(intent);
 
                     last_x = x;
                     last_y = y;
