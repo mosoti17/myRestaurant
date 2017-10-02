@@ -1,6 +1,7 @@
 package com.mosoti.myrestaurants.ui;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -20,6 +21,7 @@ import com.mosoti.myrestaurants.R;
 import com.mosoti.myrestaurants.adapters.RestaurantListAdapter;
 import com.mosoti.myrestaurants.models.Restaurant;
 import com.mosoti.myrestaurants.services.YelpService;
+import com.mosoti.myrestaurants.util.OnRestaurantSelectedListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,10 +45,21 @@ public class RestaurantListFragment extends Fragment {
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
     private String mRecentAddress;
+    private OnRestaurantSelectedListener onRestaurantSelectedListener;
 
 
     public RestaurantListFragment() {
         // Required empty public constructor
+    }
+    @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        try {
+            onRestaurantSelectedListener =(OnRestaurantSelectedListener) context;
+
+        }catch (ClassCastException e){
+            throw  new ClassCastException(context.toString()+e.getMessage());
+        }
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,28 +106,34 @@ public class RestaurantListFragment extends Fragment {
             public void onResponse(Call call, Response response) {
                 mRestaurants = yelpService.processResults(response);
 
-                getActivity().runOnUiThread(new Runnable() {
-                    // Line above states 'getActivity()' instead of previous 'RestaurantListActivity.this'
-                    // because fragments do not have own context, and must inherit from corresponding activity.
+                if (getActivity()!=null){
 
-                    @Override
-                    public void run() {
-                        mAdapter = new RestaurantListAdapter(getActivity(), mRestaurants);
-                        // Line above states `getActivity()` instead of previous
-                        // 'getApplicationContext()' because fragments do not have own context,
-                        // must instead inherit it from corresponding activity.
+                    getActivity().runOnUiThread(new Runnable() {
+                        // Line above states 'getActivity()' instead of previous 'RestaurantListActivity.this'
+                        // because fragments do not have own context, and must inherit from corresponding activity.
 
-                        mRecyclerView.setAdapter(mAdapter);
-                        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                        // Line above states 'new LinearLayoutManager(getActivity());' instead of previous
-                        // 'new LinearLayoutManager(RestaurantListActivity.this);' when method resided
-                        // in RestaurantListActivity because Fragments do not have context
-                        // and must instead inherit from corresponding activity.
+                        @Override
+                        public void run() {
+                            mAdapter = new RestaurantListAdapter(getActivity(), mRestaurants,onRestaurantSelectedListener);
+                            // Line above states `getActivity()` instead of previous
+                            // 'getApplicationContext()' because fragments do not have own context,
+                            // must instead inherit it from corresponding activity.
 
-                        mRecyclerView.setLayoutManager(layoutManager);
-                        mRecyclerView.setHasFixedSize(true);
-                    }
-                });
+                            mRecyclerView.setAdapter(mAdapter);
+                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                            // Line above states 'new LinearLayoutManager(getActivity());' instead of previous
+                            // 'new LinearLayoutManager(RestaurantListActivity.this);' when method resided
+                            // in RestaurantListActivity because Fragments do not have context
+                            // and must instead inherit from corresponding activity.
+
+                            mRecyclerView.setLayoutManager(layoutManager);
+                            mRecyclerView.setHasFixedSize(true);
+                        }
+                    });
+
+                }
+
+
             }
         });
     }

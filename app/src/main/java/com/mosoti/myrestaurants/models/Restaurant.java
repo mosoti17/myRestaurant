@@ -85,6 +85,7 @@ public class Restaurant {
     public void setPushId(String pushId) {
         this.pushId = pushId;
     }
+
     public String getIndex() {
         return index;
     }

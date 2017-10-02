@@ -17,6 +17,7 @@ import com.mosoti.myrestaurants.models.Restaurant;
 import com.mosoti.myrestaurants.ui.Constants;
 import com.mosoti.myrestaurants.ui.RestaurantDetailActivity;
 import com.mosoti.myrestaurants.ui.RestaurantDetailFragment;
+import com.mosoti.myrestaurants.util.OnRestaurantSelectedListener;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
@@ -34,17 +35,20 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
     private ArrayList<Restaurant> mRestaurants = new ArrayList<>();
     private static final int MAX_WIDTH = 200;
     private static final int MAX_HEIGHT = 200;
+    private OnRestaurantSelectedListener mRestaurantSelectedListner;
     private Context mContext;
 
-    public RestaurantListAdapter(Context context, ArrayList<Restaurant> restaurants) {
+
+    public RestaurantListAdapter(Context context, ArrayList<Restaurant> restaurants, OnRestaurantSelectedListener restaurantSelectedListener) {
         mContext = context;
         mRestaurants = restaurants;
+        mRestaurantSelectedListner=restaurantSelectedListener;
 
     }
     @Override
     public RestaurantListAdapter.RestaurantViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.restaurant_list_item, parent, false);
-        RestaurantViewHolder viewHolder = new RestaurantViewHolder(view);
+        RestaurantViewHolder viewHolder = new RestaurantViewHolder(view,mRestaurants,mRestaurantSelectedListner);
         return viewHolder;
     }
 
@@ -70,14 +74,18 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
 
         private Context mContext;
         private int mOrientation;
+        private ArrayList<Restaurant> mRestaurants = new ArrayList<>();
+        private OnRestaurantSelectedListener mRestaurantSelectedListener;
 
 
 
-            public RestaurantViewHolder(View itemView) {
+            public RestaurantViewHolder(View itemView,ArrayList<Restaurant> restaurants, OnRestaurantSelectedListener restaurantSelectedListener) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
                 mOrientation=itemView.getResources().getConfiguration().orientation;
                 mContext = itemView.getContext();
+                mRestaurants=restaurants;
+                mRestaurantSelectedListner=restaurantSelectedListener;
 
                 if (mOrientation == Configuration.ORIENTATION_LANDSCAPE) {
                     createDetailFragment(0);
@@ -92,7 +100,7 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
         // Takes position of restaurant in list as parameter:
         private void createDetailFragment(int position) {
             // Creates new RestaurantDetailFragment with the given position:
-            RestaurantDetailFragment detailFragment = RestaurantDetailFragment.newInstance(mRestaurants, position);
+            RestaurantDetailFragment detailFragment = RestaurantDetailFragment.newInstance(mRestaurants, position,Constants.SOURCE_FIND);
             // Gathers necessary components to replace the FrameLayout in the layout with the RestaurantDetailFragment:
             FragmentTransaction ft = ((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction();
             //  Replaces the FrameLayout with the RestaurantDetailFragment:
@@ -104,12 +112,14 @@ public class RestaurantListAdapter extends RecyclerView.Adapter<RestaurantListAd
             @Override
             public void onClick(View v) {
                 int itemPosition = getLayoutPosition();
+                mRestaurantSelectedListner.onRestaurantSelected(itemPosition,mRestaurants,Constants.SOURCE_FIND);
                 if (mOrientation==Configuration.ORIENTATION_LANDSCAPE){
                     createDetailFragment(itemPosition);
                 }else{
                     Intent intent = new Intent(mContext, RestaurantDetailActivity.class);
                     intent.putExtra(Constants.EXTRA_KEY_POSITION, itemPosition);
                     intent.putExtra(Constants.EXTRA_KEY_RESTAURANTS, Parcels.wrap(mRestaurants));
+                    intent.putExtra(Constants.KEY_SOURCE,Constants.SOURCE_FIND);
                     mContext.startActivity(intent);
                 }
 

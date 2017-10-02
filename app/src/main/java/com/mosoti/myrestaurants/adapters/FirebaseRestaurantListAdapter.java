@@ -18,6 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.mosoti.myrestaurants.R;
 import com.mosoti.myrestaurants.models.Restaurant;
+import com.mosoti.myrestaurants.ui.Constants;
 import com.mosoti.myrestaurants.ui.RestaurantDetailActivity;
 import com.mosoti.myrestaurants.ui.RestaurantDetailFragment;
 import com.mosoti.myrestaurants.util.ItemTouchHelperAdapter;
@@ -112,8 +113,9 @@ public class FirebaseRestaurantListAdapter extends FirebaseRecyclerAdapter<Resta
                     createDeatailFragment(itemPosition);
                 }else{
                     Intent intent = new Intent(mContext, RestaurantDetailActivity.class);
-                    intent.putExtra("position", viewHolder.getAdapterPosition());
-                    intent.putExtra("restaurants", Parcels.wrap(mRestaurants));
+                    intent.putExtra(Constants.EXTRA_KEY_POSITION, viewHolder.getAdapterPosition());
+                    intent.putExtra(Constants.EXTRA_KEY_RESTAURANTS, Parcels.wrap(mRestaurants));
+                    intent.putExtra(Constants.KEY_SOURCE,Constants.SOURCE_SAVED);
                     mContext.startActivity(intent);
                 }
 
@@ -122,7 +124,7 @@ public class FirebaseRestaurantListAdapter extends FirebaseRecyclerAdapter<Resta
     }
 
     public void createDeatailFragment(int position){
-        RestaurantDetailFragment detailFragment=RestaurantDetailFragment.newInstance(mRestaurants,position);
+        RestaurantDetailFragment detailFragment=RestaurantDetailFragment.newInstance(mRestaurants,position,Constants.SOURCE_SAVED);
         FragmentTransaction ft=((FragmentActivity)mContext).getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.restaurantDetailContainer, detailFragment);
         ft.commit();
@@ -144,10 +146,13 @@ public class FirebaseRestaurantListAdapter extends FirebaseRecyclerAdapter<Resta
 
     private void setIndexInFirebase() {
         for (Restaurant restaurant : mRestaurants) {
+
             int index = mRestaurants.indexOf(restaurant);
             DatabaseReference ref = getRef(index);
-            restaurant.setIndex(Integer.toString(index));
-            ref.setValue(restaurant);
+
+            ref.child("index").setValue(Integer.toString(index));
+
+
         }
     }
     @Override
